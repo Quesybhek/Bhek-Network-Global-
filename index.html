@@ -27,11 +27,11 @@
         /* [V1] MATRIX KERNEL BACKGROUND */
         canvas#matrix { position: fixed; inset: 0; z-index: -1; opacity: 0.12; pointer-events: none; }
         
-        /* [V2] GLASSMORPHISM & ANIMATION */
+        /* [V2] GLASSMORPHISM UI */
         .glass { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .glass:hover { border-color: var(--emerald); box-shadow: var(--glow); transform: translateY(-2px); }
 
-        /* [V3] NEXUS SIDEBAR SYSTEM */
+        /* [V3] NEXUS SIDEBAR */
         #nexus-sidebar { position: fixed; right: -420px; top: 0; width: 380px; height: 100vh; z-index: 2000; transition: 0.6s cubic-bezier(1,0,0,1); padding: 40px 20px; }
         #nexus-sidebar.active { right: 0; }
 
@@ -42,7 +42,7 @@
         .node-pulse::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: var(--emerald); animation: ping 2s infinite; }
         @keyframes ping { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
 
-        /* SCROLLBAR REFINEMENT */
+        /* CUSTOM SCROLLBAR */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--ink); }
         ::-webkit-scrollbar-thumb { background: var(--emerald); border-radius: 10px; }
@@ -67,7 +67,7 @@
             <button onclick="UI.toggleNexus()" class="text-emerald-400 font-black text-[10px] tracking-widest flex items-center gap-2">
                 <span class="material-symbols-rounded text-sm">hub</span> PROJECT NEXUS
             </button>
-            <button onclick="Kernel.auth()" class="bg-white text-black px-5 py-2 rounded-full font-black text-[10px] tracking-widest hover:bg-emerald-400 transition">GATEWAY</button>
+            <button id="auth-btn" onclick="Kernel.auth()" class="bg-white text-black px-5 py-2 rounded-full font-black text-[10px] tracking-widest hover:bg-emerald-400 transition">GATEWAY</button>
         </div>
     </nav>
 
@@ -88,7 +88,7 @@
                 <span class="text-[9px] font-black bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded mb-6 inline-block">ARCHITECT_PROFILE</span>
                 <h4 class="text-3xl font-bold mb-4 group-hover:text-emerald-400 transition">Amponsah Abdul-Hakeem</h4>
                 <p class="text-white/40 text-sm leading-relaxed mb-8">
-                    Principal Architect behind the BNG-155 Protocol. Under the mantle of <b>Quesy Bhek</b>, he builds sovereign operating systems prioritizing data ownership, venture velocity, and decentralized logistics.
+                    Principal Architect behind the BNG-155 Protocol. Under the mantle of <b>Quesy Bhek</b>, he builds sovereign operating systems prioritizing data ownership and decentralized logistics.
                 </p>
                 <div class="flex gap-4">
                     <div class="text-[10px] font-black text-white/20 uppercase tracking-widest">Strategy</div>
@@ -97,10 +97,10 @@
             </div>
 
             <div class="glass p-10 rounded-[40px] group">
-                <span class="text-[9px] font-black bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded mb-6 inline-block">SYSTEM_v3.5.1</span>
-                <h4 class="text-3xl font-bold mb-4 group-hover:text-emerald-400 transition">Singularity Mesh</h4>
+                <span class="text-[9px] font-black bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded mb-6 inline-block">SYSTEM_v3.5.2</span>
+                <h4 class="text-3xl font-bold mb-4 group-hover:text-emerald-400 transition">GitHub Cloud Handshake</h4>
                 <p class="text-white/40 text-sm leading-relaxed mb-8">
-                    Successful deployment of the Terrestrial Mesh and Secure Drop protocols. BNG is now a persistent, cloud-synced environment.
+                    Successfully patched the cross-origin authentication loop. BNG is now fully compatible with GitHub Pages hosting while maintaining Puter cloud persistence.
                 </p>
                 <button class="text-[10px] font-black tracking-widest uppercase py-3 px-6 border border-white/10 rounded-xl hover:bg-white hover:text-black transition">Read Release Notes</button>
             </div>
@@ -146,7 +146,6 @@
     <footer class="py-24 px-8 text-center glass mt-20">
         <img src="BNG.jpeg" class="h-16 w-16 mx-auto rounded-2xl mb-8 grayscale opacity-30 hover:opacity-100 transition duration-1000">
         <p class="text-white/20 text-[9px] font-bold tracking-[0.5em] uppercase">Bhek Network Global © 2025 | Architect: Abdul-Hakeem</p>
-        <p class="text-emerald-500/20 text-[8px] font-black mt-4 uppercase tracking-[1em]">Omni-Sovereign Infrastructure</p>
     </footer>
 
     <script>
@@ -156,9 +155,9 @@
                 this.detectNode();
                 this.clock();
                 Nexus.init();
+                this.updateAuthUI();
                 this.log("System Singularity Active.");
                 this.log("Architect: Amponsah Abdul-Hakeem.");
-                this.log("Node: Accra_Sovereign_Primary.");
             },
             log(msg) {
                 const term = document.getElementById('terminal');
@@ -170,11 +169,7 @@
             clock() {
                 setInterval(() => {
                     const now = new Date();
-                    // Syncing to Africa/Accra (GMT)
-                    document.getElementById('chronometer').innerText = now.toLocaleTimeString('en-GB', { 
-                        timeZone: 'Africa/Accra', 
-                        hour12: false 
-                    });
+                    document.getElementById('chronometer').innerText = now.toLocaleTimeString('en-GB', { timeZone: 'Africa/Accra', hour12: false });
                 }, 1000);
             },
             matrix() {
@@ -197,21 +192,34 @@
                     const res = await fetch('https://ipapi.co/json/');
                     const data = await res.json();
                     document.getElementById('node-info').innerText = `NODE: ${data.city.toUpperCase()} HUB [IP: ${data.ip}]`;
-                    this.log(`Mesh Connection: ${data.country_name}.`);
                 } catch(e) { this.log("Routing via Encrypted Backbone."); }
             },
             async auth() {
-                const user = await puter.auth.signIn();
-                this.log(`Commander ${user.username} Authenticated.`);
+                this.log("Initiating Cloud Handshake...");
+                try {
+                    const user = await puter.auth.signIn();
+                    this.log(`Commander ${user.username} Authenticated.`);
+                    this.updateAuthUI();
+                } catch (err) { this.log("Handshake Error: Check popups."); }
+            },
+            updateAuthUI() {
+                const btn = document.getElementById('auth-btn');
+                if (puter.auth.isSignedIn()) {
+                    btn.innerHTML = "SYSTEM ONLINE";
+                    btn.classList.replace('bg-white', 'bg-emerald-500');
+                    btn.classList.add('text-black');
+                }
             }
         };
 
         const Nexus = {
             links: [],
             async init() {
-                const stored = await puter.kv.get('bhek_master_nexus');
-                this.links = stored ? JSON.parse(stored) : [];
-                this.render();
+                try {
+                    const stored = await puter.kv.get('bhek_master_nexus');
+                    this.links = stored ? JSON.parse(stored) : [];
+                    this.render();
+                } catch(e) { this.render(); }
             },
             async add() {
                 const name = prompt("Hub Name:"), url = prompt("URL:");
@@ -234,14 +242,14 @@
 
         const UI = { toggleNexus() { document.getElementById('nexus-sidebar').classList.toggle('active'); } };
 
-        /* SECURE FILE DROP ENGINE */
         document.getElementById('drop-zone').onclick = () => document.getElementById('file-input').click();
         document.getElementById('file-input').onchange = async (e) => {
+            if (!puter.auth.isSignedIn()) await Kernel.auth();
             for (let file of e.target.files) {
                 Kernel.log(`Encrypting ${file.name}...`);
                 try {
-                    await puter.fs.write(`Bhek_Network_Files/${file.name}`, file);
-                    Kernel.log(`SUCCESS: ${file.name} stored in cloud.`);
+                    await puter.fs.write(`Bhek_Network_Files/${file.name}`, file, {createMissingParents: true});
+                    Kernel.log(`SUCCESS: ${file.name} stored.`);
                 } catch(err) { Kernel.log(`ERROR: Sync failed.`); }
             }
         };
@@ -250,3 +258,4 @@
     </script>
 </body>
 </html>
+
